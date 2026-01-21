@@ -7,7 +7,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.HashMap;
 public class Menu {
-
+	
+	private static final String Separador_Pedido = " - ";
+	private static final String Separador_Productos = ", ";
+	private static final int Contador_Productos = 1;	
+	
+	
+	
 	public static Scanner sc = new Scanner(System.in);
 	public static ArrayList<String> pedidosArrayList = new ArrayList<>();
 	public static LinkedList<String> pedidosLinkedlist = new LinkedList<>();
@@ -35,6 +41,7 @@ public class Menu {
 					break;
 				case 4:
 					atenderPedido();
+					break;
 				case 5:
 					System.out.println("Gracias por usar el servicio ");
 					break;
@@ -52,8 +59,7 @@ public class Menu {
 		System.out.println("3. mostrar menu");
 		System.out.println("4. atender siguinte pedido ");
 		System.out.println("5. Salir");		
-		System.out.print("Elija una opción: ");
-		int opcion = sc.nextInt();
+		int opcion = readInt("Seleccione una opción: ");
 		sc.nextLine(); // limpia el búfer para evitar errores al leer texto después de números
 		return opcion;
 	}
@@ -68,16 +74,46 @@ public class Menu {
 	
 	public static void añadirpedido() {
 		System.out.print("Nombre del cliente: ");
-		String nombre = sc.nextLine();
-		String pedido = "";
-		while (!pedido.equalsIgnoreCase("fin")){
-			
+		String cliente = sc.nextLine();
+
+		ArrayList<String> productos = new ArrayList<>();
+		String pedido;
+
+		do {
+			System.out.print("¿Qué desea pedir? (Fin para terminar): ");
+			pedido = sc.nextLine();
+
+			if (!pedido.equalsIgnoreCase("fin")) {
+
+				// Comprobamos si el producto existe en el menú
+				if (menuHashMap.containsKey(pedido)) {
+					productos.add(pedido);
+				} else {
+					System.out.println("Producto no disponible en el menú.");
+				}
+			}
+
+		} while (!pedido.equalsIgnoreCase("fin"));
+
+		// Si no ha pedido nada
+		if (productos.isEmpty()) {
+			System.out.println("No se añadió ningún pedido.");
+			return;
 		}
-		System.out.print("Cual es su pedido 'Fin para terminad de pedir': ");
-		pedido =sc.nextLine();
-		
-		
+
+		// Construimos el pedido en texto
+		String pedidoFinal = cliente + Separador_Pedido + String.join(Separador_Productos, productos);
+
+		// Lo añadimos a la cola de pedidos
+		pedidosLinkedlist.add(pedidoFinal);
+
+		System.out.println("Pedido añadido correctamente.");
 	}
+
+		
+		
+		
+	
 	public static void mostrarPedido() {
 		
 		for (Map.Entry<String, Double> entry : menuHashMap.entrySet()) {
@@ -101,14 +137,40 @@ public class Menu {
 		
 		
 	}
-	public static void atenderPedido() {
-	   
+	/*public static void atenderPedido() {
+		
+		if (pedidosLinkedlist.isEmpty()) {
+			System.out.println("No hay pedidos");
+			return;
+		} else {
+			
+			mostrarPedidoUnitario();
+			pedidosLinkedlist.remove(0);
+
+		}
+	}
+	*/
+	public static void atenderPedido(){
+		
+		
+		
 	}
 
-
- 
-}
-
-
-
-
+	public static void mostrarPedidoUnitario() {
+			
+		System.out.println(pedidosLinkedlist.get(0));
+			
+	}
+	public static int readInt(String input) {
+		System.out.print(input);
+		while (!sc.hasNextInt()) { // Mientras no sea entero, pide de nuevo
+			System.out.print("Valor inválido. Intente de nuevo: ");
+			sc.next(); // Limpia el dato incorrecto
+		}
+		return sc.nextInt();
+	}
+	
+	
+		
+	}
+	
