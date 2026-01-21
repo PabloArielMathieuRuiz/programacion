@@ -65,12 +65,14 @@ public class Menu {
 	}
 	
 	public static void loadProducto() {
-		menuHashMap.put("Cafe",1.50);
-		menuHashMap.put("Te verde",1.20);
-		menuHashMap.put("Capuchino",2.00);
-		menuHashMap.put("Donut",1.00);
-		menuHashMap.put("Croissant",1.30);
+		menuHashMap.put("cafe", 1.50);
+		menuHashMap.put("te verde", 1.20);
+		menuHashMap.put("capuchino", 2.00);
+		menuHashMap.put("donut", 1.00);
+		menuHashMap.put("croissant", 1.30);
+
 	}
+
 	
 	public static void añadirpedido() {
 		System.out.print("Nombre del cliente: ");
@@ -81,11 +83,10 @@ public class Menu {
 
 		do {
 			System.out.print("¿Qué desea pedir? (Fin para terminar): ");
-			pedido = sc.nextLine();
+			pedido = sc.nextLine().toLowerCase();
 
-			if (!pedido.equalsIgnoreCase("fin")) {
+			if (!pedido.equals("fin")) {
 
-				// Comprobamos si el producto existe en el menú
 				if (menuHashMap.containsKey(pedido)) {
 					productos.add(pedido);
 				} else {
@@ -93,34 +94,39 @@ public class Menu {
 				}
 			}
 
-		} while (!pedido.equalsIgnoreCase("fin"));
+		} while (!pedido.equals("fin"));
 
-		// Si no ha pedido nada
 		if (productos.isEmpty()) {
 			System.out.println("No se añadió ningún pedido.");
 			return;
 		}
 
-		// Construimos el pedido en texto
-		String pedidoFinal = cliente + Separador_Pedido + String.join(Separador_Productos, productos);
+		String pedidoFinal = cliente + Separador_Pedido +
+				String.join(Separador_Productos, productos);
 
-		// Lo añadimos a la cola de pedidos
 		pedidosLinkedlist.add(pedidoFinal);
-
 		System.out.println("Pedido añadido correctamente.");
 	}
 
-		
-		
+
 		
 	
 	public static void mostrarPedido() {
-		
-		for (Map.Entry<String, Double> entry : menuHashMap.entrySet()) {
-			System.out.println(entry.getKey()+" - "+ entry.getValue()+ "€");
+
+		if (pedidosLinkedlist.isEmpty()) {
+			System.out.println("No hay pedidos pendientes.");
+			return;
 		}
-			
+
+		System.out.println("\nPedidos pendientes:");
+
+		int contador = 1;
+		for (String pedido : pedidosLinkedlist) {
+			System.out.println(contador + ". " + pedido);
+			contador++;
+		}
 	}
+
 	
 	
 	public static void mostrarmenu() {
