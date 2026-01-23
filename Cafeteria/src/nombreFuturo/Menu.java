@@ -10,7 +10,6 @@ public class Menu {
 	
 	private static final String Separador_Pedido = " - ";
 	private static final String Separador_Productos = ", ";
-	private static final int Contador_Productos = 1;	
 	
 	
 	
@@ -71,6 +70,9 @@ public class Menu {
 		menuHashMap.put("donut", 1.00);
 		menuHashMap.put("croissant", 1.30);
 
+		
+		menuTreeMap.clear();// asegurarse que no hay nada en el treemap
+		menuTreeMap.putAll(menuHashMap);// pasa todo el menu al treemas desde el hashmap
 	}
 
 	
@@ -83,7 +85,7 @@ public class Menu {
 
 		do {
 			System.out.print("¿Qué desea pedir? (Fin para terminar): ");
-			pedido = sc.nextLine().toLowerCase();
+			pedido = sc.nextLine().toLowerCase(); //pasa todo el pedido a minuscula para evitar errores ent
 
 			if (!pedido.equals("fin")) {
 
@@ -143,30 +145,21 @@ public class Menu {
 		
 		
 	}
-	/*public static void atenderPedido() {
-		
+
+	public static void atenderPedido() {
+
 		if (pedidosLinkedlist.isEmpty()) {
-			System.out.println("No hay pedidos");
+			System.out.println("No hay pedidos pendientes.");
 			return;
-		} else {
-			
-			mostrarPedidoUnitario();
-			pedidosLinkedlist.remove(0);
-
 		}
-	}
-	*/
-	public static void atenderPedido(){
-		
-		
-		
+
+		String pedidoAtendido = pedidosLinkedlist.poll(); // obtiene y elimina el primer pedido 
+		System.out.println("Atendiendo pedido:");
+		System.out.println(pedidoAtendido);
 	}
 
-	public static void mostrarPedidoUnitario() {
-			
-		System.out.println(pedidosLinkedlist.get(0));
-			
-	}
+
+	
 	public static int readInt(String input) {
 		System.out.print(input);
 		while (!sc.hasNextInt()) { // Mientras no sea entero, pide de nuevo
@@ -175,8 +168,5 @@ public class Menu {
 		}
 		return sc.nextInt();
 	}
-	
-	
-		
-	}
+}
 	
