@@ -8,50 +8,52 @@ import java.util.Map;
 import java.util.HashMap;
 public class Menu {
 	
-	private static final String Separador_Pedido = " - ";
-	private static final String Separador_Productos = ", ";
+	private final String Separador_Pedido = " - ";
+	private final String Separador_Productos = ", ";
 	
 	
 	
-	public static Scanner sc = new Scanner(System.in);
-	public static ArrayList<String> pedidosArrayList = new ArrayList<>();
-	public static LinkedList<String> pedidosLinkedlist = new LinkedList<>();
-	public static Map <String, Double> menuHashMap = new HashMap<>();
-	public static TreeMap <String, Double> menuTreeMap = new TreeMap<>(menuHashMap);
+	public final Scanner sc = new Scanner(System.in);
+	public final ArrayList<String> pedidosArrayList = new ArrayList<>();
+	public final LinkedList<String> pedidosLinkedlist = new LinkedList<>();
+	public final Map <String, Double> menuHashMap = new HashMap<>();
+	public final TreeMap <String, Double> menuTreeMap = new TreeMap<>(menuHashMap);
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-		loadProducto();
-		int opcion;
-		do {
-			
-			opcion = mostrarMenu();
-			
-			switch (opcion) {
-				case 1:
-					añadirpedido();
-					break;
-				case 2:
-					mostrarPedido();
-					break;
-				case 3:
-					mostrarmenu();
-					break;
-				case 4:
-					atenderPedido();
-					break;
-				case 5:
-					System.out.println("Gracias por usar el servicio ");
-					break;
-				default:
-					System.out.println("Opción no válida. Inténtelo de nuevo.");
-			}
-		} while (opcion != 4);
+	    Menu menu = new Menu();
+
+	    menu.loadProducto();
+	    int opcion;
+
+	    do {
+	        opcion = menu.mostrarMenu();
+
+	        switch (opcion) {
+	            case 1:
+	                menu.añadirpedido();
+	                break;
+	            case 2:
+	                menu.mostrarPedido();
+	                break;
+	            case 3:
+	                menu.mostrarmenu();
+	                break;
+	            case 4:
+	                menu.atenderPedido();
+	                break;
+	            case 5:
+	                System.out.println("Gracias por usar el servicio");
+	                break;
+	            default:
+	                System.out.println("Opción no válida. Inténtelo de nuevo.");
+	        }
+	    } while (opcion != 5);
 	}
 
+
 	// --- MENÚ PRINCIPAL ---
-	public static int mostrarMenu() {
+	public int mostrarMenu() {
 		System.out.println("== Menú ==");
 		System.out.println("1. añadirpedido");
 		System.out.println("2. mostrar pedido");
@@ -63,10 +65,10 @@ public class Menu {
 		return opcion;
 	}
 	
-	public static void loadProducto() {
+	public void loadProducto() {
 		menuHashMap.put("cafe", 1.50);
 		menuHashMap.put("te verde", 1.20);
-		menuHashMap.put("capuchino", 2.00);
+		menuHashMap.put("capuchino", 2.00);	
 		menuHashMap.put("donut", 1.00);
 		menuHashMap.put("croissant", 1.30);
 
@@ -76,7 +78,7 @@ public class Menu {
 	}
 
 	
-	public static void añadirpedido() {
+	public void añadirpedido() {
 		System.out.print("Nombre del cliente: ");
 		String cliente = sc.nextLine();
 
@@ -113,7 +115,7 @@ public class Menu {
 
 		
 	
-	public static void mostrarPedido() {
+	public void mostrarPedido() {
 
 		if (pedidosLinkedlist.isEmpty()) {
 			System.out.println("No hay pedidos pendientes.");
@@ -131,7 +133,7 @@ public class Menu {
 
 	
 	
-	public static void mostrarmenu() {
+	public void mostrarmenu() {
 		
 		System.out.println("\nMenu (HasMap,sin ordenar): ");
 		for (Map.Entry<String, Double> entry : menuHashMap.entrySet()) {
@@ -146,7 +148,7 @@ public class Menu {
 		
 	}
 
-	public static void atenderPedido() {
+	public void atenderPedido() {
 
 		if (pedidosLinkedlist.isEmpty()) {
 			System.out.println("No hay pedidos pendientes.");
@@ -160,7 +162,7 @@ public class Menu {
 
 
 	
-	public static int readInt(String input) {
+	public int readInt(String input) {
 		System.out.print(input);
 		while (!sc.hasNextInt()) { // Mientras no sea entero, pide de nuevo
 			System.out.print("Valor inválido. Intente de nuevo: ");
