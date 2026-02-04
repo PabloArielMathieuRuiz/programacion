@@ -2,6 +2,8 @@ package cafeteriaAUnaCapa;
 
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -9,6 +11,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.HashMap;
+
+//Para poner los pedidos en un .txt
+import java.io.IOException;
+
 
  
 public class Cafeteria {
@@ -64,7 +70,7 @@ public class Cafeteria {
     public void ejecutar() {
     	
     	int opcion;
-    	
+    		
         // Bucle principal: se repite hasta que el usuario elija 0
     	do {
     		opcion= mostrarMenuPrincipal();
@@ -150,30 +156,32 @@ public class Cafeteria {
         System.out.println("Pedido añadido correctamente.");
     }
 
-
+    // --- RECOLECTAMOS TODOS LOS PRODUCTOS QUE QUIERA EL CLIENTE ---
     public void pedirProductos(ArrayList<String> productos) {
 
-        String producto;
-
+        String producto= "";
+        // Hasta que el cliente no ponga la palabra "fin" no para de pedir productos
         do {
             System.out.print("¿Qué desea pedir? (fin para terminar): ");
+            //Lo pasamos todo a minuscula para que de igual la marera en la que ponga "FiN"
             producto = sc.nextLine().toLowerCase();
-
+            //Que hara dependiendo si pono fin o no
             if (!producto.equals("fin")) {
-
+            	//Comprueba que el pedido del cliente esta el en menu
                 if (menuHashMap.containsKey(producto)) {
                     productos.add(producto);
                 } else {
+                	//Evita que se cree un pedido vacio ya que seria un desperdicio
                     System.out.println("Producto no disponible.");
-                    mostrarMenuProductos();
+                    mostrarHashMap();
                 }
             }
 
         } while (!producto.equals("fin"));
     }
 
-
     
+    // --- PEDIMOS EL NOMBRE DEL CLIENTE --- 
     public String pedirNombre() {
     	
     	 System.out.print("Nombre del cliente: ");
@@ -243,11 +251,17 @@ public class Cafeteria {
         // Lo guardamos como atendido
         pedidosAtendidos.add(pedido);
 
+        // GENERAR EL CÓDIGO AQUÍ
+        String codigo = generarCodigoOperacion();
+        
         System.out.println("Atendiendo pedido:");
         System.out.println(pedido);
         
+        registrarOperacion(codigo);
+        // Lo guardamos en un .txt
+        guardarPedidoEnTxt(pedido, codigo);
         // Registramos fecha y código
-        registrarOperacion();
+        
     }
 
     // --- ELIMINAR PEDIDO ---
@@ -290,7 +304,7 @@ public class Cafeteria {
     }
 
     // --- REGISTRO DE OPERACIÓN ---
- 	public static void registrarOperacion() {
+ 	public void registrarOperacion(String codigo) {
  		
  		// Fecha y hora actual
  		LocalDateTime ahora = LocalDateTime.now();
@@ -300,11 +314,11 @@ public class Cafeteria {
 
  		// Mostramos código y fecha
  		System.out.println("Código de operación: " + generarCodigoOperacion());
- 		System.out.println("Fecha y hora: " + ahora.format(formato));
+ 		System.out.println("Fecha y hora: " + ahora.format(formato));	
  	}
 
  	// --- GENERADOR DE CÓDIGO ---
- 	public static String generarCodigoOperacion() {
+ 	public String generarCodigoOperacion() {
  		
  		Random random = new Random();
  		String letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -349,4 +363,33 @@ public class Cafeteria {
         return sc.nextInt();
     }
     
+    
+    //--- GUARDAMOS LOS PEDIDOS EN UN .TXT ---
+    public void guardarPedidoEnTxt(String pedido, String codigo) {
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("pedidos.txt", true))) {
+
+            LocalDateTime ahora = LocalDateTime.now();
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+            bw.write("Pedido: " + pedido);
+            bw.newLine();
+          
+            bw.write("Codigo: " + codigo); // MISMO código
+            bw.newLine();
+           
+            bw.write("Fecha: " + ahora.format(formato));
+            bw.newLine();
+            
+            bw.write("------------------------------------");
+            bw.newLine();
+
+        } catch (IOException e) {
+            System.out.println("Error al guardar el pedido en el archivo");
+        }
+    }
+    	
 }
+    
+    
+
