@@ -1,0 +1,351 @@
+package cafeteriaAUnaCapa;
+
+import java.util.Scanner;
+import java.util.TreeMap;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Random;
+import java.util.HashMap;
+
+ 
+public class Cafeteria {
+
+    // Separador entre nombre del cliente y productos
+    private final String SEPARADOR_PEDIDO = " - ";
+    
+    // Separador entre productos
+    private final String SEPARADOR_PRODUCTOS = ", ";
+    
+    
+    // Scanner para leer datos por teclado
+    private Scanner sc;
+    
+    // Lista para pedidos pendientes (FIFO: primero en entrar, primero en salir)
+    private LinkedList<String> pedidosPendientes;
+    
+    // Lista para pedidos ya atendidos
+    private ArrayList<String> pedidosAtendidos;
+    
+    // HashMap: menú sin ordenar
+    private Map<String, Double> menuHashMap;
+    
+    // TreeMap: menú ordenado alfabéticamente
+    private TreeMap<String, Double> menuTreeMap;
+    
+    
+    public Cafeteria() {
+        // Inicializamos el scanner
+        this.sc = new Scanner(System.in);
+
+        // Inicializamos las listas de pedidos
+        this.pedidosPendientes = new LinkedList<>();
+        this.pedidosAtendidos = new ArrayList<>();
+
+        // Inicializamos los mapas del menú
+        this.menuHashMap = new HashMap<>();
+        this.menuTreeMap = new TreeMap<>();
+
+        // Cargamos los productos al crear el objeto
+        cargarProductos();
+    }
+
+    
+    
+    public static void main(String[] args) {
+
+        // Creamos el menú y arrancamos el programa
+    	new Cafeteria().ejecutar();
+      
+    }
+    
+    public void ejecutar() {
+    	
+    	int opcion;
+    	
+        // Bucle principal: se repite hasta que el usuario elija 0
+    	do {
+    		opcion= mostrarMenuPrincipal();
+    		procesarOpcion(opcion);
+    	} while (opcion !=0);	   
+    }
+    	
+    
+    // --- MENÚ PRINCIPAL ---
+    public int mostrarMenuPrincipal() {
+    	
+        // Mostramos las opciones por pantalla
+        System.out.println("\n== MENÚ ==");
+        System.out.println("1. Añadir pedido");
+        System.out.println("2. Mostrar pedidos pendientes");
+        System.out.println("3. Mostrar menú");
+        System.out.println("4. Atender siguiente pedido");
+        System.out.println("5. Eliminar pedido por número");
+        System.out.println("6. Ver pedidos atendidos");
+        System.out.println("0. Salir");
+
+        // Leemos la opción como entero
+        int opcion = readInt("Seleccione una opción: ");
+        
+        // Limpiamos el salto de línea que deja nextInt()
+        sc.nextLine();
+        
+        return opcion;
+    }
+    
+    // --- PROCESA LA OPCIÓN ELEGIDA ---
+    public void procesarOpcion(int opcion) {
+        
+        // Según la opción, llamamos al método correspondiente
+        Cafeteria menu = new Cafeteria();
+        
+            switch (opcion) {
+                case 1 -> menu.añadirPedido();
+                case 2 -> menu.mostrarPedidos();
+                case 3 -> menu.mostrarMenuProductos();
+                case 4 -> menu.atenderPedido();
+                case 5 -> menu.eliminarPedido();
+                case 6 -> menu.mostrarPedidosAtendidos();
+                case 0 -> menu.cerrarScaner();
+                default -> System.out.println("Opción no válida.");   
+            }
+    }
+
+    // --- CARGA DE PRODUCTOS ---
+    public void cargarProductos() {
+        
+        // Añadimos los productos al HashMap
+        menuHashMap.put("cafe", 1.50);
+        menuHashMap.put("te verde", 1.20);
+        menuHashMap.put("capuchino", 2.00);
+        menuHashMap.put("donut", 1.00);
+        menuHashMap.put("croissant", 1.30);
+
+        // Limpiamos el TreeMap por si tenía datos
+        menuTreeMap.clear();
+        
+        // Copiamos el HashMap al TreeMap para ordenarlo
+        menuTreeMap.putAll(menuHashMap);
+    }
+
+    // --- AÑADIR PEDIDO ---
+    public void añadirPedido() {
+        
+        // Pedimos el nombre del cliente
+        System.out.print("Nombre del cliente: ");
+        String cliente = sc.nextLine();
+
+        // Lista temporal de productos del pedido
+        ArrayList<String> productos = new ArrayList<>();
+        
+        // Total del pedido
+        double total = 0;
+        
+        String producto;
+
+        // Bucle para pedir productos hasta escribir "fin"
+        do {
+            System.out.print("¿Qué desea pedir? (fin para terminar): ");
+            producto = sc.nextLine().toLowerCase();
+
+            if (!producto.equals("fin")) {
+                
+                // Comprobamos si el producto existe
+                if (menuHashMap.containsKey(producto)) {
+                    
+                    productos.add(producto);
+                    total += menuHashMap.get(producto);
+                    
+                } else {
+                    
+                    System.out.println("Producto no disponible.");
+                    mostrarMenuProductos();
+                }
+            }
+        } while (!producto.equals("fin"));
+
+        // Si no se pidió nada, cancelamos
+        if (productos.isEmpty()) {
+            System.out.println("No se añadió ningún pedido.");
+            return;
+        }
+
+        // Creamos el texto final del pedido
+        String pedidoFinal = cliente + SEPARADOR_PEDIDO +
+                String.join(SEPARADOR_PRODUCTOS, productos) + " | Total: " + String.format("%.2f", total) + "€";
+
+        // Añadimos el pedido a pendientes
+        pedidosPendientes.add(pedidoFinal);
+        
+        System.out.println("Pedido añadido correctamente.");
+    }
+
+    // --- MOSTRAR PEDIDOS PENDIENTES ---
+    public void mostrarPedidos() {
+        
+        // Si no hay pedidos, avisamos
+        if (pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos pendientes.");
+            return;
+        }
+
+        int contador = 1;
+        
+        // Mostramos los pedidos numerados
+        for (String pedido : pedidosPendientes) {
+            System.out.println(contador + ". " + pedido);
+            contador++;
+        }
+    }
+
+    // --- MOSTRAR MENÚ ---
+    public void mostrarMenuProductos() {
+        
+        // Mostramos los dos mapas
+    	mostrarHashMap();
+    	mostrarTreeMap();
+    }
+    
+    // --- MOSTRAR MENÚ (HASHMAP) ---
+    public void mostrarHashMap() {
+    	
+    	System.out.println("\nMenu (HashMap, sin ordenar): ");
+		for (Map.Entry<String, Double> entry : menuHashMap.entrySet()) {
+			System.out.println(entry.getKey()+" - "+ entry.getValue()+ "€");
+		}
+    }
+    
+    // --- MOSTRAR MENÚ (TREEMAP) ---
+    public void mostrarTreeMap() {
+    	
+    	System.out.println("\nMenu (TreeMap, ordenado alfabéticamente): ");
+		for (Map.Entry<String, Double> entry : menuTreeMap.entrySet()) {
+			System.out.println(entry.getKey()+" - "+ entry.getValue()+ "€");
+		}
+    }
+    
+
+    // --- ATENDER PEDIDO ---
+    public void atenderPedido() {
+        
+        // Si no hay pedidos, no hacemos nada
+        if (pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos pendientes.");
+            return;
+        }
+
+        // Sacamos el primer pedido de la cola
+        String pedido = pedidosPendientes.poll();
+        
+        // Lo guardamos como atendido
+        pedidosAtendidos.add(pedido);
+
+        System.out.println("Atendiendo pedido:");
+        System.out.println(pedido);
+        
+        // Registramos fecha y código
+        registrarOperacion();
+    }
+
+    // --- ELIMINAR PEDIDO ---
+    public void eliminarPedido() {
+        
+        if (pedidosPendientes.isEmpty()) {
+            System.out.println("No hay pedidos pendientes.");
+            return;
+        }
+
+        mostrarPedidos();
+        
+        // Pedimos el número a eliminar
+        int numero = readInt("Número del pedido a eliminar: ");
+        sc.nextLine();
+
+        // Comprobamos que el número sea válido
+        if (numero < 1 || numero > pedidosPendientes.size()) {
+            System.out.println("Número inválido.");
+            return;
+        }
+
+        // Eliminamos el pedido elegido
+        pedidosPendientes.remove(numero - 1);
+        
+        System.out.println("Pedido eliminado correctamente.");
+    }
+
+    // --- MOSTRAR HISTORIAL ---
+    public void mostrarPedidosAtendidos() {
+        
+        if (pedidosAtendidos.isEmpty()) {
+            System.out.println("No hay pedidos atendidos.");
+            return;
+        }
+
+        System.out.println("\nPedidos atendidos:");
+        
+        pedidosAtendidos.forEach(System.out::println);
+    }
+
+    // --- REGISTRO DE OPERACIÓN ---
+ 	public static void registrarOperacion() {
+ 		
+ 		// Fecha y hora actual
+ 		LocalDateTime ahora = LocalDateTime.now();
+ 		
+        // Formato de fecha
+ 		DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+ 		// Mostramos código y fecha
+ 		System.out.println("Código de operación: " + generarCodigoOperacion());
+ 		System.out.println("Fecha y hora: " + ahora.format(formato));
+ 	}
+
+ 	// --- GENERADOR DE CÓDIGO ---
+ 	public static String generarCodigoOperacion() {
+ 		
+ 		Random random = new Random();
+ 		String letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+ 		String codigo = "";
+
+ 		// Genera 3 letras
+ 		for (int i = 0; i < 3; i++) {
+ 			int indiceLetra = random.nextInt(letras.length());
+ 			codigo += letras.charAt(indiceLetra);
+ 		}
+
+ 		// Genera 4 números
+ 		for (int i = 0; i < 4; i++) {
+ 			int numero = random.nextInt(10);
+ 			codigo += numero;
+ 		}
+
+ 		return codigo;
+ 	}
+
+    // --- CERRAR PROGRAMA ---
+    public void cerrarScaner() {
+
+    	System.out.println("Gracias por usar el servicio");
+        
+        // Cerramos el scanner
+        sc.close();
+    }
+    
+    
+    // --- LEE UN ENTERO DE FORMA SEGURA ---
+    public int readInt(String mensaje) {
+        
+        System.out.print(mensaje);
+        
+        // Mientras no sea un entero, vuelve a pedirlo
+        while (!sc.hasNextInt()) {
+            System.out.print("Valor inválido. Intente de nuevo: ");
+            sc.next();
+        }
+        
+        return sc.nextInt();
+    }
+    
+}
