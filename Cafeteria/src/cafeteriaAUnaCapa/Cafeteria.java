@@ -99,16 +99,14 @@ public class Cafeteria {
     public void procesarOpcion(int opcion) {
         
         // Según la opción, llamamos al método correspondiente
-        Cafeteria menu = new Cafeteria();
-        
             switch (opcion) {
-                case 1 -> menu.añadirPedido();
-                case 2 -> menu.mostrarPedidos();
-                case 3 -> menu.mostrarMenuProductos();
-                case 4 -> menu.atenderPedido();
-                case 5 -> menu.eliminarPedido();
-                case 6 -> menu.mostrarPedidosAtendidos();
-                case 0 -> menu.cerrarScaner();
+                case 1 -> añadirPedido();
+                case 2 -> mostrarPedidos();
+                case 3 -> mostrarMenuProductos();
+                case 4 -> atenderPedido();
+                case 5 -> eliminarPedido();
+                case 6 -> mostrarPedidosAtendidos();
+                case 0 -> cerrarScaner();// salida de la aplicacion
                 default -> System.out.println("Opción no válida.");   
             }
     }
@@ -132,56 +130,59 @@ public class Cafeteria {
 
     // --- AÑADIR PEDIDO ---
     public void añadirPedido() {
-        
-        // Pedimos el nombre del cliente
-        System.out.print("Nombre del cliente: ");
-        String cliente = sc.nextLine();
 
-        // Lista temporal de productos del pedido
+        String cliente = pedirNombre();
+
         ArrayList<String> productos = new ArrayList<>();
-        
-        // Total del pedido
-        double total = 0;
-        
-        String producto;
 
-        // Bucle para pedir productos hasta escribir "fin"
-        do {
-            System.out.print("¿Qué desea pedir? (fin para terminar): ");
-            producto = sc.nextLine().toLowerCase();
+        pedirProductos(productos);
 
-            if (!producto.equals("fin")) {
-                
-                // Comprobamos si el producto existe
-                if (menuHashMap.containsKey(producto)) {
-                    
-                    productos.add(producto);
-                    total += menuHashMap.get(producto);
-                    
-                } else {
-                    
-                    System.out.println("Producto no disponible.");
-                    mostrarMenuProductos();
-                }
-            }
-        } while (!producto.equals("fin"));
-
-        // Si no se pidió nada, cancelamos
         if (productos.isEmpty()) {
             System.out.println("No se añadió ningún pedido.");
             return;
         }
 
-        // Creamos el texto final del pedido
         String pedidoFinal = cliente + SEPARADOR_PEDIDO +
-                String.join(SEPARADOR_PRODUCTOS, productos) + " | Total: " + String.format("%.2f", total) + "€";
+                String.join(SEPARADOR_PRODUCTOS, productos);
 
-        // Añadimos el pedido a pendientes
         pedidosPendientes.add(pedidoFinal);
-        
+
         System.out.println("Pedido añadido correctamente.");
     }
 
+
+    public void pedirProductos(ArrayList<String> productos) {
+
+        String producto;
+
+        do {
+            System.out.print("¿Qué desea pedir? (fin para terminar): ");
+            producto = sc.nextLine().toLowerCase();
+
+            if (!producto.equals("fin")) {
+
+                if (menuHashMap.containsKey(producto)) {
+                    productos.add(producto);
+                } else {
+                    System.out.println("Producto no disponible.");
+                    mostrarMenuProductos();
+                }
+            }
+
+        } while (!producto.equals("fin"));
+    }
+
+
+    
+    public String pedirNombre() {
+    	
+    	 System.out.print("Nombre del cliente: ");
+         String cliente = sc.nextLine();
+         return cliente;
+    	
+    	
+    }
+    
     // --- MOSTRAR PEDIDOS PENDIENTES ---
     public void mostrarPedidos() {
         
