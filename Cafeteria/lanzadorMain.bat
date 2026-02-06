@@ -1,4 +1,4 @@
 
-javac -d bin -cp src src/CafeteriaAUnaCapa/Cafeteria.java
+javac -d bin -cp src src\cafeteriaAUnaCapa\Cafeteria.java
 java -cp bin app.Cafeteria
 
