@@ -112,7 +112,7 @@ public class Cafeteria {
                 case 4 -> atenderPedido();
                 case 5 -> eliminarPedido();
                 case 6 -> mostrarPedidosAtendidos();
-                case 0 -> cerrarScaner();// salida de la aplicacion
+                case 0 -> cerrarRecursos();// salida de la aplicacion
                 default -> System.out.println("Opción no válida.");   
             }
     }
@@ -340,7 +340,7 @@ public class Cafeteria {
  	}
 
     // --- CERRAR PROGRAMA ---
-    public void cerrarScaner() {
+    public void cerrarRecursos() {
 
     	System.out.println("Gracias por usar el servicio");
         
@@ -381,7 +381,7 @@ public class Cafeteria {
             bw.write("Fecha: " + ahora.format(formato));
             bw.newLine();
             
-            bw.write("------------------------------------");
+            bw.write("------------------------------------");	
             bw.newLine();
 
         } catch (IOException e) {

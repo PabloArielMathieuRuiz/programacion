@@ -1,11 +1,4 @@
-@echo off
-echo Compilando el proyecto...
 
+javac -d bin -cp src src/CafeteriaAUnaCapa/Cafeteria.java
+java -cp bin app.Cafeteria
 
-javac -d bin src\cafeteriaAUnaCapa\Cafeteria.java
-
-echo Ejecutando la aplicación...
-
-java -cp bin cafeteriaAUnaCapa.Cafeteria
-
-pause
