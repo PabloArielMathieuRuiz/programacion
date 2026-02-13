@@ -1,0 +1,8 @@
+Pedido: Pedido Nº1: pablo - cafe
+Codigo: GPL3654
+Fecha: 11/02/2026 17:47:10
+------------------------------------
+Pedido: Pedido Nº1: pablo - cafe, te verde
+Codigo: DPX2208
+Fecha: 11/02/2026 19:33:39
+------------------------------------
